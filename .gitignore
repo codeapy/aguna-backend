@@ -1,0 +1,11 @@
+# Created by .ignore support plugin (hsz.mobi)
+/node_modules
+/dist
+yarn-error.log
+.env
+.yarnclean
+.DS_Store
+src/graphql/schema/generated
+.env.test
+/workspace
+src/graphql/schema/schema.graphql

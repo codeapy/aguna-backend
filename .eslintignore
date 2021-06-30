@@ -1,0 +1,8 @@
+node_modules
+.gitignore
+dist
+prisma
+commitlint.config.js
+.next
+generated
+_notes
