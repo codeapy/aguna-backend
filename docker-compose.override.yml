@@ -1,0 +1,17 @@
+version: "3.5"
+services:
+  keycloak:
+    ports:
+      - target: 8080
+        published: 8180
+    environment:
+      - KEYCLOAK_USER=admin
+      - KEYCLOAK_PASSWORD=admin
+      - "KEYCLOAK_IMPORT=/tmp/realm.json -Dkeycloak.profile.feature.upload_scripts=enabled"
+      - DB_ADDR=host.docker.internal:5433
+      - DB_VENDOR=postgres
+      - DB_DATABASE=keycloak
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+    volumes:
+      - ./keycloak/realm.json:/tmp/realm.json

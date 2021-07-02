@@ -1,0 +1,11 @@
+version: "3.5"
+services:
+  keycloak:
+    image: jboss/keycloak:9.0.3
+    container_name: keycloak
+    networks:
+      - app-net
+    restart: always
+
+networks:
+  app-net:
