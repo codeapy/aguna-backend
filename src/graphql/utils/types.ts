@@ -1,20 +1,30 @@
-// import {
-//   ApolloError,
-//   AuthenticationError,
-//   UserInputError,
-// } from 'apollo-server-koa';
-//
-// export type PlatformError = {
-//   code: string;
-//   message: string;
-// };
-//
-// export type PlatformErrorsDefinition = {
-//   [key: string]: PlatformError;
-// };
-//
-// export class PlatformApolloError extends ApolloError {
-//   constructor(platformError: PlatformError) {
-//     super(platformError.message, platformError.code);
-//   }
-// }
+/* eslint-disable camelcase */
+
+export type KeycloakUser = {
+  exp: number;
+  iat: number;
+  jti: string;
+  iss: string;
+  aud: string;
+  sub: string;
+  typ: string;
+  azp: string;
+  session_state: string;
+  acr: number;
+  'allowed-origins': string[];
+  realm_access: {
+    roles: string[];
+  };
+  resource_access: {
+    account: {
+      roles: string[];
+    };
+  };
+  scope: string;
+  email_verified: boolean;
+  name: string;
+  preferred_username: string;
+  given_name: string;
+  family_name: string;
+  email: string;
+};

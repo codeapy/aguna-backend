@@ -275,7 +275,7 @@
       ],
       "security-admin-console": [],
       "admin-cli": [],
-      "policlient": [
+      "aguna": [
         {
           "id": "355d3522-dde2-477a-9989-b07ed591685e",
           "name": "uma_protection",
@@ -399,17 +399,17 @@
     {
       "id": "be5fbc8c-1ee1-48d3-8bf4-a8a77dca1635",
       "createdTimestamp": 1587858232824,
-      "username": "service-account-policlient",
+      "username": "service-account-aguna",
       "enabled": true,
       "totp": false,
       "emailVerified": false,
-      "serviceAccountClientId": "policlient",
+      "serviceAccountClientId": "aguna",
       "credentials": [],
       "disableableCredentialTypes": [],
       "requiredActions": [],
       "realmRoles": ["offline_access", "uma_authorization"],
       "clientRoles": {
-        "policlient": ["uma_protection"],
+        "aguna": ["uma_protection"],
         "account": ["view-profile", "manage-account"]
       },
       "notBefore": 0,
@@ -606,7 +606,7 @@
     },
     {
       "id": "68a1f43f-7095-4825-b75e-b338406e6280",
-      "clientId": "policlient",
+      "clientId": "aguna",
       "surrogateAuthRequired": false,
       "enabled": true,
       "alwaysDisplayInConsole": false,
@@ -777,7 +777,7 @@
         "resources": [
           {
             "name": "Default Resource",
-            "type": "urn:policlient:resources:default",
+            "type": "urn:aguna:resources:default",
             "ownerManagedAccess": false,
             "attributes": {},
             "_id": "0ed79b98-43e9-498d-857c-d87efbb0b35f",
@@ -804,7 +804,7 @@
             "logic": "POSITIVE",
             "decisionStrategy": "UNANIMOUS",
             "config": {
-              "defaultResourceType": "urn:policlient:resources:default",
+              "defaultResourceType": "urn:aguna:resources:default",
               "applyPolicies": "[\"Default Policy\"]"
             }
           }

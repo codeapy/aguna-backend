@@ -6,11 +6,12 @@ import { permissions } from './graphql/utils/rules';
 import schema from './graphql/schema/schema';
 import { isDev } from './graphql/utils/constants';
 import { createContext } from './graphql/schema/context';
+import authMiddleware from './graphql/middlewares/authMiddleware';
 
 config();
 
 export const server = new ApolloServer({
-  schema: applyMiddleware(schema, permissions),
+  schema: applyMiddleware(schema, authMiddleware, permissions),
   context: createContext,
   debug: isDev,
 });
