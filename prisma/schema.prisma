@@ -1,5 +1,5 @@
 generator client {
-  provider        = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -15,13 +15,359 @@ model Rol {
 }
 
 model Usuario {
-  id        Int       @id @default(autoincrement())
-  email     String    @unique
-  username  String?
-  nombre    String?
-  apellido  String?
-  activo    Boolean   @default(true)
-  roles     Rol[]
-  createdAt DateTime? @default(now())
-  updatedAt DateTime? @updatedAt
+  id                       Int                  @id @default(autoincrement())
+  email                    String               @unique
+  username                 String?
+  nombre                   String?
+  apellido                 String?
+  activo                   Boolean              @default(true)
+  roles                    Rol[]
+  seguimientos             Seguimiento[]
+  createdAt                DateTime?            @default(now())
+  updatedAt                DateTime?            @updatedAt
+  Cuestionario             Cuestionario[]
+  notasControlRealizadas   NotaControlInterno[] @relation("RealizadoPor")
+  notasControlCertificadas NotaControlInterno[] @relation("CertificadoPor")
+  comentarios              Comentario[]         @relation("ComentadoPor")
+  comentariosResueltos     Comentario[]         @relation("ResueltoPor")
+
+
+  PapelTrabajoTablaControl PapelTrabajoTablaControl[]
+}
+
+model Entidad {
+  id        Int         @id @default(autoincrement())
+  nombre    String      @unique
+  createdAt DateTime?   @default(now())
+  updatedAt DateTime?   @updatedAt
+  Auditoria Auditoria[]
+}
+
+model Auditoria {
+  id                    Int                     @id @default(autoincrement())
+  fechaInicio           DateTime?               @default(now())
+  fechaFin              DateTime?               @default(now())
+  entidad               Entidad                 @relation(fields: [entidadId], references: [id])
+  informe               String?
+  informeCreatedAt      DateTime?               @default(now())
+  informeUpdatedAt      DateTime?               @updatedAt
+  createdAt             DateTime?               @default(now())
+  updatedAt             DateTime?               @updatedAt
+  entidadId             Int
+  AuditoriaFinanciera   AuditoriaFinanciera[]
+  AuditoriaCumplimiento AuditoriaCumplimiento[]
+}
+
+model AuditoriaFinanciera {
+  id                       Int                        @id @default(autoincrement())
+  auditoria                Auditoria                  @relation(fields: [auditoriaId], references: [id])
+  createdAt                DateTime?                  @default(now())
+  updatedAt                DateTime?                  @updatedAt
+  auditoriaId              Int
+  BalanceVariacionCabecera BalanceVariacionCabecera[]
+}
+
+model BalanceVariacionCabecera {
+  id                         Int                        @id @default(autoincrement())
+  fechaInicioPeriodo         DateTime?                  @default(now())
+  fechaFinPeriodo            DateTime?                  @default(now())
+  balanceAnterior            BalanceVariacionCabecera?  @relation("BalanceVariacionCabeceraToBalanceVariacionCabecera", fields: [balanceVariacionCabeceraId], references: [id])
+  auditoria                  AuditoriaFinanciera        @relation(fields: [auditoriaFinancieraId], references: [id])
+  createdAt                  DateTime?                  @default(now())
+  updatedAt                  DateTime?                  @updatedAt
+  BalanceVariacionCabecera   BalanceVariacionCabecera[] @relation("BalanceVariacionCabeceraToBalanceVariacionCabecera")
+  balanceVariacionCabeceraId Int?
+  auditoriaFinancieraId      Int
+  CuentaBalanceVariacion     CuentaBalanceVariacion[]
+  BalanceVariacionDetalle    BalanceVariacionDetalle[]
+}
+
+enum ClasificacionCuenta {
+  ACTIVO
+  PASIVO
+  GASTO
+  INGRESO
+}
+
+model CuentaBalanceVariacion {
+  id                         Int                       @id @default(autoincrement())
+  codigo                     String
+  codigoCompleto             String
+  profundidad                Int
+  denominacion               String
+  clasificacion              ClasificacionCuenta
+  balance                    BalanceVariacionCabecera  @relation(fields: [balanceVariacionCabeceraId], references: [id])
+  padre                      CuentaBalanceVariacion?   @relation("CuentaBalanceVariacionToCuentaBalanceVariacion", fields: [cuentaBalanceVariacionId], references: [id])
+  createdAt                  DateTime?                 @default(now())
+  updatedAt                  DateTime?                 @updatedAt
+  CuentaBalanceVariacion     CuentaBalanceVariacion[]  @relation("CuentaBalanceVariacionToCuentaBalanceVariacion")
+  balanceVariacionCabeceraId Int
+  cuentaBalanceVariacionId   Int?
+  BalanceVariacionDetalle    BalanceVariacionDetalle[]
+}
+
+model Adjunto {
+  id                  Int                   @id @default(autoincrement())
+  path                String                @unique
+  descripcion         String
+  metadatos           String
+  createdAt           DateTime?             @default(now())
+  updatedAt           DateTime?             @updatedAt
+  PapelTrabajo        PapelTrabajo?         @relation(fields: [papelTrabajoId], references: [id])
+  papelTrabajoId      Int?
+  PapelTrabajoAdjunto PapelTrabajoAdjunto[]
+  comentarios         Comentario[]
+
+}
+
+model PapelTrabajo {
+  id                             Int                              @id @default(autoincrement())
+  referencia                     String                           @unique
+  balanceDetalle                 BalanceVariacionDetalle?         @relation(fields: [balanceVariacionDetalleId], references: [id])
+  auditoriaCumplimientoDetalle   AuditoriaCumplimientoDetalle?    @relation(fields: [auditoriaCumplimientoDetalleId], references: [id])
+  createdAt                      DateTime?                        @default(now())
+  updatedAt                      DateTime?                        @updatedAt
+  balanceVariacionDetalleId      Int
+  Adjunto                        Adjunto[]
+  PapelTrabajoAdjunto            PapelTrabajoAdjunto[]
+  PapelTrabajoCuestionario       PapelTrabajoCuestionario[]
+  PapelTrabajoNotaControlInterno PapelTrabajoNotaControlInterno[]
+  PapelTrabajoTablaControl       PapelTrabajoTablaControl[]
+  auditoriaCumplimientoDetalleId Int?
+}
+
+model PapelTrabajoAdjunto {
+  id             Int          @id @default(autoincrement())
+  papel          PapelTrabajo @relation(fields: [papelTrabajoId], references: [id])
+  adjunto        Adjunto      @relation(fields: [adjuntoId], references: [id])
+  createdAt      DateTime?    @default(now())
+  updatedAt      DateTime?    @updatedAt
+  papelTrabajoId Int
+  adjuntoId      Int
+}
+
+model TipoCuestionario {
+  id                   Int                    @id @default(autoincrement())
+  nombre               String                 @unique
+  createdAt            DateTime?              @default(now())
+  updatedAt            DateTime?              @updatedAt
+  ItemTipoCuestionario ItemTipoCuestionario[]
+}
+
+model ItemTipoCuestionario {
+  id                    Int                     @id @default(autoincrement())
+  tipoCuestionario      TipoCuestionario        @relation(fields: [tipoCuestionarioId], references: [id])
+  descripcion           String
+  createdAt             DateTime?               @default(now())
+  updatedAt             DateTime?               @updatedAt
+  tipoCuestionarioId    Int
+  CuestionarioRespuesta CuestionarioRespuesta[]
+}
+
+model Cuestionario {
+  id                       Int                        @id @default(autoincrement())
+  nombre                   String                     @unique
+  realizadoPor             Usuario                    @relation(fields: [usuarioId], references: [id])
+  entidadAuditada          String
+  fechaRealizacion         DateTime?
+  createdAt                DateTime?                  @default(now())
+  updatedAt                DateTime?                  @updatedAt
+  PapelTrabajoCuestionario PapelTrabajoCuestionario[]
+  usuarioId                Int
+  CuestionarioRespuesta    CuestionarioRespuesta[]
+}
+
+enum ValorCuestionarioRespuesta {
+  SI
+  NO
+  NA
+}
+
+model CuestionarioRespuesta {
+  id                     Int                        @id @default(autoincrement())
+  itemTipoCuestionario   ItemTipoCuestionario       @relation(fields: [itemTipoCuestionarioId], references: [id])
+  cuestionario           Cuestionario               @relation(fields: [cuestionarioId], references: [id])
+  respuesta              ValorCuestionarioRespuesta
+  observaciones          String
+  createdAt              DateTime?                  @default(now())
+  updatedAt              DateTime?                  @updatedAt
+  itemTipoCuestionarioId Int
+  cuestionarioId         Int
+}
+
+model PapelTrabajoCuestionario {
+  id             Int          @id @default(autoincrement())
+  papel          PapelTrabajo @relation(fields: [papelTrabajoId], references: [id])
+  cuestionario   Cuestionario @relation(fields: [cuestionarioId], references: [id])
+  createdAt      DateTime?    @default(now())
+  updatedAt      DateTime?    @updatedAt
+  papelTrabajoId Int
+  cuestionarioId Int
+}
+
+model NotaControlInterno {
+  id                             Int                              @id @default(autoincrement())
+  numero                         String
+  texto                          String
+  realizadoPor                   Usuario?                         @relation("RealizadoPor", fields: [realizadoPorId], references: [id])
+  fechaRealizado                 DateTime?
+  certificadoPor                 Usuario?                         @relation("CertificadoPor", fields: [certificadoPorId], references: [id])
+  fechaCertificado               DateTime?
+  createdAt                      DateTime?                        @default(now())
+  updatedAt                      DateTime?                        @updatedAt
+  realizadoPorId                 Int
+  certificadoPorId               Int
+  PapelTrabajoNotaControlInterno PapelTrabajoNotaControlInterno[]
+}
+
+model PapelTrabajoNotaControlInterno {
+  id                   Int                @id @default(autoincrement())
+  papel                PapelTrabajo       @relation(fields: [papelTrabajoId], references: [id])
+  nota                 NotaControlInterno @relation(fields: [notaControlInternoId], references: [id])
+  createdAt            DateTime?          @default(now())
+  updatedAt            DateTime?          @updatedAt
+  papelTrabajoId       Int
+  notaControlInternoId Int
+}
+
+model BalanceVariacionDetalle {
+  id                         Int                      @id @default(autoincrement())
+  saldoAnterior              Int
+  debito                     Int
+  credito                    Int
+  deudor                     Int
+  acreedor                   Int
+  activo                     Int
+  pasivo                     Int
+  gastos                     Int
+  ingresos                   Int
+  cuenta                     CuentaBalanceVariacion   @relation(fields: [cuentaBalanceVariacionId], references: [id])
+  cabecera                   BalanceVariacionCabecera @relation(fields: [balanceVariacionCabeceraId], references: [id])
+  createdAt                  DateTime?                @default(now())
+  updatedAt                  DateTime?                @updatedAt
+  cuentaBalanceVariacionId   Int
+  PapelTrabajo               PapelTrabajo[]
+  Seguimiento                Seguimiento[]
+  balanceVariacionCabeceraId Int
+}
+
+model AuditoriaCumplimiento {
+  id                           Int                            @id @default(autoincrement())
+  auditoria                    Auditoria                      @relation(fields: [auditoriaId], references: [id])
+  createdAt                    DateTime?                      @default(now())
+  updatedAt                    DateTime?                      @updatedAt
+  auditoriaId                  Int
+  AuditoriaCumplimientoDetalle AuditoriaCumplimientoDetalle[]
+}
+
+model AuditoriaCumplimientoDetalle {
+  id                      Int                   @id @default(autoincrement())
+  auditoriaCumplimiento   AuditoriaCumplimiento @relation(fields: [auditoriaCumplimientoId], references: [id])
+  createdAt               DateTime?             @default(now())
+  updatedAt               DateTime?             @updatedAt
+  PapelTrabajo            PapelTrabajo[]
+  auditoriaCumplimientoId Int
+}
+
+model TipoTablaControl {
+  id           Int            @id @default(autoincrement())
+  nombre       String
+  createdAt    DateTime?      @default(now())
+  updatedAt    DateTime?      @updatedAt
+  TablaControl TablaControl[]
+}
+
+model TablaControl {
+  id                       Int                        @id @default(autoincrement())
+  nombre                   String                     @unique
+  codigo                   String                     @unique
+  tipo                     TipoTablaControl           @relation(fields: [tipoTablaControlId], references: [id])
+  createdAt                DateTime?                  @default(now())
+  updatedAt                DateTime?                  @updatedAt
+  ItemTipoTablaControl     ItemTipoTablaControl[]
+  PapelTrabajoTablaControl PapelTrabajoTablaControl[]
+  TablaControlRespuesta    TablaControlRespuesta[]
+  tipoTablaControlId       Int
+  Seguimiento              Seguimiento[]
+  Comentario               Comentario[]
+}
+
+model ItemTipoTablaControl {
+  id                    Int                     @id @default(autoincrement())
+  tabla                 TablaControl            @relation(fields: [tablaControlId], references: [id])
+  orden                 Int
+  descripcion           String
+  createdAt             DateTime?               @default(now())
+  updatedAt             DateTime?               @updatedAt
+  TablaControlRespuesta TablaControlRespuesta[]
+  tablaControlId        Int
+}
+
+enum ValorTablaControlRespuesta {
+  SI
+  NO
+  NA
+}
+
+model PapelTrabajoTablaControl {
+  id             Int          @id @default(autoincrement())
+  papel          PapelTrabajo @relation(fields: [papelTrabajoId], references: [id])
+  tabla          TablaControl @relation(fields: [tablaControlId], references: [id])
+  realizadoPor   Usuario?     @relation(fields: [usuarioId], references: [id])
+  fechaRealizado DateTime?
+  entidad        String?
+  createdAt      DateTime?    @default(now())
+  updatedAt      DateTime?    @updatedAt
+  papelTrabajoId Int
+  tablaControlId Int
+  usuarioId      Int?
+}
+
+model TablaControlRespuesta {
+  id                     Int                        @id @default(autoincrement())
+  itemTipoTablaControl   ItemTipoTablaControl       @relation(fields: [itemTipoTablaControlId], references: [id])
+  cuestionario           TablaControl               @relation(fields: [cuestionarioId], references: [id])
+  respuesta              ValorTablaControlRespuesta
+  observaciones          String
+  createdAt              DateTime?                  @default(now())
+  updatedAt              DateTime?                  @updatedAt
+  itemTipoTablaControlId Int
+  cuestionarioId         Int
+  Seguimiento            Seguimiento[]
+}
+
+model Seguimiento {
+  id                        Int                      @id @default(autoincrement())
+  balanceDetalle            BalanceVariacionDetalle? @relation(fields: [balanceVariacionDetalleId], references: [id])
+  tablaControlRespuesta     TablaControlRespuesta?   @relation(fields: [tablaControlRespuestaId], references: [id])
+  usuarios                  Usuario[]
+  createdAt                 DateTime?                @default(now())
+  updatedAt                 DateTime?                @updatedAt
+  TablaControl              TablaControl?            @relation(fields: [tablaControlId], references: [id])
+  tablaControlId            Int?
+  balanceVariacionDetalleId Int?
+  tablaControlRespuestaId   Int?
+}
+
+enum EstadoComentario {
+  ABIERTO
+  RESUELTO
+}
+
+model Comentario {
+  id                        Int           @id @default(autoincrement())
+  usuario                   Usuario       @relation("ComentadoPor", fields: [usuarioId], references: [id])
+  usuarioId                 Int
+  text                      String
+  resoluble                 Boolean       @default(false)
+  resueltoPor               Usuario?      @relation("ResueltoPor", fields: [resueltoPorId], references: [id])
+  resueltoPorId             Int?
+  fechaResuelto             DateTime?
+  createdAt                 DateTime?     @default(now())
+  updatedAt                 DateTime?     @updatedAt
+  TablaControl              TablaControl? @relation(fields: [tablaControlId], references: [id])
+  tablaControlId            Int?
+  balanceVariacionDetalleId Int?
+  tablaControlRespuestaId   Int?
+  adjuntos                  Adjunto[]
 }
