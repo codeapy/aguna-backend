@@ -45,6 +45,7 @@ model Entidad {
 
 model Auditoria {
   id                    Int                     @id @default(autoincrement())
+  nombre                String
   fechaInicio           DateTime?               @default(now())
   fechaFin              DateTime?               @default(now())
   entidad               Entidad                 @relation(fields: [entidadId], references: [id])
