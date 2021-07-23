@@ -22,8 +22,8 @@ export type AgunaError = {
   message: string;
 };
 
-export type AgunaErrorsDefinition = {
-  [key: string]: AgunaError;
+export type AgunaErrorsDefinition<T extends string> = {
+  [key in T]: AgunaError;
 };
 
 export class AgunaApolloError extends ApolloError {

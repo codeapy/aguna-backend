@@ -1,6 +1,11 @@
 import { AgunaErrorsDefinition } from '../../utils/types';
 
-const errors: AgunaErrorsDefinition = {
+type EntidadErrorCode =
+  | 'ENTIDAD_EXISTENTE'
+  | 'ENTIDAD_NO_EXISTENTE'
+  | 'ENTIDAD_POSEE_AUDITORIAS';
+
+const errors: AgunaErrorsDefinition<EntidadErrorCode> = {
   ENTIDAD_EXISTENTE: {
     code: 'ENTIDAD_EXISTENTE',
     message: 'Ya existe una entidad con el mismo nombre',
