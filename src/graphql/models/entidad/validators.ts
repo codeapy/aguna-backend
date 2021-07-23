@@ -55,7 +55,7 @@ async function deleteEntidad(resolve, root, args, context, info) {
 }
 
 // eslint-disable-next-line import/prefer-default-export
-export const validators = {
+export const EntidadValidator = {
   type: ModuleObjects.VALIDATOR,
   Mutation: {
     createEntidad,

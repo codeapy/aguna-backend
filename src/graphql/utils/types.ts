@@ -8,7 +8,7 @@ import {
 
 export enum ModuleObjects {
   VALIDATOR,
-  RULE,
+  PERMISSION,
 }
 
 export type AgunaErrors = {

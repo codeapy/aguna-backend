@@ -2,7 +2,7 @@ import { config } from 'dotenv';
 import Koa from 'koa';
 import { ApolloServer } from 'apollo-server-koa';
 import { applyMiddleware } from 'graphql-middleware';
-import { permissions } from './graphql/utils/rules';
+import permissions from './graphql/permissions';
 import schema from './graphql/schema/schema';
 import { isDev } from './graphql/utils/constants';
 import { createContext } from './graphql/schema/context';
