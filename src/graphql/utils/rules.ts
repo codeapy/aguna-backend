@@ -14,7 +14,7 @@ export const rules = {
 export const permissions = shield(
   {
     Query: {
-      roles: chain(rules.isAuthenticated),
+      entidades: chain(rules.isAuthenticated),
     },
   },
   {

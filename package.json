@@ -13,6 +13,7 @@
     "lint": "eslint --fix './src/**/*.ts'",
     "format": "prettier --write 'src/**/*.ts'",
     "prisma:generate": "prisma generate",
+    "nexus:generate": "ts-node --transpile-only src/graphql/schema/schema",
     "copy-files": "copyfiles -u 1 src/**/*.pem dist/"
   },
   "keywords": [],

@@ -11,3 +11,4 @@ export const GQLTimestamp = asNexusMethod(
 export const GQLLong = asNexusMethod(LongResolver, 'long', 'number');
 
 export * from './usuario';
+export * from './entidad';

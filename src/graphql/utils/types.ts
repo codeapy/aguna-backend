@@ -1,4 +1,36 @@
 /* eslint-disable camelcase */
+/* eslint-disable camelcase,no-unused-vars,no-shadow */
+import {
+  ApolloError,
+  AuthenticationError,
+  UserInputError,
+} from 'apollo-server-koa';
+
+export enum ModuleObjects {
+  VALIDATOR,
+  RULE,
+}
+
+export type AgunaErrors = {
+  notAuthenticated: AuthenticationError;
+  userAlreadyExists: UserInputError;
+  invalidAdminSecretKey: Error;
+};
+
+export type AgunaError = {
+  code: string;
+  message: string;
+};
+
+export type AgunaErrorsDefinition = {
+  [key: string]: AgunaError;
+};
+
+export class AgunaApolloError extends ApolloError {
+  constructor(agunaError: AgunaError) {
+    super(agunaError.message, agunaError.code);
+  }
+}
 
 export type KeycloakUser = {
   exp: number;
