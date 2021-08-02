@@ -7,13 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Rol {
-  id          Int       @id @default(autoincrement())
-  codigo      String    @unique
-  descripcion String?
-  usuarios    Usuario[]
-}
-
 model Usuario {
   id                       Int                  @id @default(autoincrement())
   email                    String               @unique
@@ -21,7 +14,6 @@ model Usuario {
   nombre                   String?
   apellido                 String?
   activo                   Boolean              @default(true)
-  roles                    Rol[]
   seguimientos             Seguimiento[]
   createdAt                DateTime?            @default(now())
   updatedAt                DateTime?            @updatedAt
@@ -30,8 +22,6 @@ model Usuario {
   notasControlCertificadas NotaControlInterno[] @relation("CertificadoPor")
   comentarios              Comentario[]         @relation("ComentadoPor")
   comentariosResueltos     Comentario[]         @relation("ResueltoPor")
-
-
   PapelTrabajoTablaControl PapelTrabajoTablaControl[]
 }
 
