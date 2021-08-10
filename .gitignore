@@ -9,3 +9,6 @@ src/graphql/schema/generated
 .env.test
 /workspace
 src/graphql/schema/schema.graphql
+
+.idea
+docker-compose.chelo.yml
