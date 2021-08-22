@@ -30,4 +30,13 @@ export const AuditoriaMutations = mutationField((t) => {
       return services.deleteAuditoria(id);
     },
   });
+  t.field('asignarRoles', {
+    type: 'Boolean',
+    args: {
+      input: 'AsignacionesRoles',
+    },
+    resolve: async (_parent, { input: { asignaciones } }) => {
+      return services.asignarRoles(asignaciones);
+    },
+  });
 });

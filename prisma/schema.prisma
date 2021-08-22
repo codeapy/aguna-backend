@@ -8,20 +8,21 @@ datasource db {
 }
 
 model Usuario {
-  id                       Int                  @id @default(autoincrement())
-  email                    String               @unique
+  id         Int    @id @default(autoincrement())
+  keycloakId String @unique @default("")
+  email      String @unique
   username                 String?
   nombre                   String?
   apellido                 String?
-  activo                   Boolean              @default(true)
+  activo                   Boolean                    @default(true)
   seguimientos             Seguimiento[]
-  createdAt                DateTime?            @default(now())
-  updatedAt                DateTime?            @updatedAt
+  createdAt                DateTime?                  @default(now())
+  updatedAt                DateTime?                  @updatedAt
   Cuestionario             Cuestionario[]
-  notasControlRealizadas   NotaControlInterno[] @relation("RealizadoPor")
-  notasControlCertificadas NotaControlInterno[] @relation("CertificadoPor")
-  comentarios              Comentario[]         @relation("ComentadoPor")
-  comentariosResueltos     Comentario[]         @relation("ResueltoPor")
+  notasControlRealizadas   NotaControlInterno[]       @relation("RealizadoPor")
+  notasControlCertificadas NotaControlInterno[]       @relation("CertificadoPor")
+  comentarios              Comentario[]               @relation("ComentadoPor")
+  comentariosResueltos     Comentario[]               @relation("ResueltoPor")
   PapelTrabajoTablaControl PapelTrabajoTablaControl[]
 }
 
@@ -40,6 +41,7 @@ model Auditoria {
   fechaFin              DateTime?               @default(now())
   entidad               Entidad                 @relation(fields: [entidadId], references: [id])
   informe               String?
+  tiposRol              TipoRolAuditoria[]
   informeCreatedAt      DateTime?               @default(now())
   informeUpdatedAt      DateTime?               @updatedAt
   createdAt             DateTime?               @default(now())
@@ -47,6 +49,16 @@ model Auditoria {
   entidadId             Int
   AuditoriaFinanciera   AuditoriaFinanciera[]
   AuditoriaCumplimiento AuditoriaCumplimiento[]
+}
+
+model TipoRolAuditoria {
+  id          Int         @id @default(autoincrement())
+  nombre      String
+  codigo      String      @unique
+  descripcion String?
+  auditoria   Auditoria[]
+  createdAt   DateTime?   @default(now())
+  updatedAt   DateTime?   @updatedAt
 }
 
 model AuditoriaFinanciera {

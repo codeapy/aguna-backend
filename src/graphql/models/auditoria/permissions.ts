@@ -8,4 +8,7 @@ export const AuditoriaPermission = {
   Query: {
     auditorias: chain(rules.isAuthenticated),
   },
+  Mutation: {
+    asignarRoles: chain(rules.isAuthenticated),
+  },
 };

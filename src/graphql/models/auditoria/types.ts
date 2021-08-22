@@ -33,3 +33,20 @@ export const AuditoriaUpdateInput = inputObjectType({
     t.nonNull.int('entidadId');
   },
 });
+
+export const AsignacionRoles = inputObjectType({
+  name: 'AsignacionRoles',
+  definition(t) {
+    t.nonNull.string('keycloakUserId');
+    t.nonNull.list.string('codigosRolesAuditoria');
+  },
+});
+
+export const AsignacionesRoles = inputObjectType({
+  name: 'AsignacionesRoles',
+  definition(t) {
+    t.list.field('asignaciones', {
+      type: 'AsignacionRoles',
+    });
+  },
+});
