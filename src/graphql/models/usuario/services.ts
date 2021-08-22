@@ -6,6 +6,7 @@ async function syncUsuario({
   preferred_username: username,
   given_name: nombre,
   family_name: apellido,
+  sub: keycloakId,
 }: KeycloakUser) {
   return prisma.usuario.upsert({
     create: {
@@ -13,6 +14,7 @@ async function syncUsuario({
       username,
       nombre,
       apellido,
+      keycloakId,
       activo: true,
     },
     update: {
@@ -20,6 +22,7 @@ async function syncUsuario({
       username,
       nombre,
       apellido,
+      keycloakId,
       activo: true,
     },
     where: {
