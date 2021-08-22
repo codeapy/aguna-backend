@@ -38,7 +38,9 @@ export const AsignacionRoles = inputObjectType({
   name: 'AsignacionRoles',
   definition(t) {
     t.nonNull.string('keycloakUserId');
-    t.nonNull.list.string('codigosRolesAuditoria');
+    t.nonNull.list.field('roles', {
+      type: 'KeycloakRoleInput',
+    });
   },
 });
 
@@ -48,5 +50,21 @@ export const AsignacionesRoles = inputObjectType({
     t.list.field('asignaciones', {
       type: 'AsignacionRoles',
     });
+  },
+});
+
+export const KeycloakRoleInput = inputObjectType({
+  name: 'KeycloakRoleInput',
+  definition(t) {
+    t.string('id');
+    t.string('name');
+  },
+});
+
+export const KeycloakRole = objectType({
+  name: 'KeycloakRole',
+  definition(t) {
+    t.string('id');
+    t.string('name');
   },
 });

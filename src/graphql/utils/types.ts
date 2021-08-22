@@ -60,3 +60,8 @@ export type KeycloakUser = {
   family_name: string;
   email: string;
 };
+
+export type KeycloakRole = {
+  id: string;
+  name: string;
+};

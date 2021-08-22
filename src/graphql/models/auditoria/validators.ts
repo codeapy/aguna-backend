@@ -54,6 +54,31 @@ async function deleteAuditoria(resolve, root, args, context, info) {
   return resolve(root, args, context, info);
 }
 
+async function rolesAuditoria(resolve, root, args, context, info) {
+  const {
+    input: { id },
+  } = args;
+
+  const auditoria = await prisma.auditoria.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      tiposRol: true,
+    },
+  });
+
+  if (!auditoria) {
+    throwError(errors.AUDITORIA_NO_EXISTENTE);
+  }
+
+  context.sanitizedArgs = {
+    auditoria,
+  };
+
+  return resolve(root, args, context, info);
+}
+
 // eslint-disable-next-line import/prefer-default-export
 export const AuditoriaValidator = {
   type: ModuleObjects.VALIDATOR,
@@ -61,5 +86,8 @@ export const AuditoriaValidator = {
     createAuditoria,
     updateAuditoria,
     deleteAuditoria,
+  },
+  Query: {
+    rolesAuditoria,
   },
 };

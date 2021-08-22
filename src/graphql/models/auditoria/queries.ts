@@ -20,4 +20,13 @@ export const AuditoriaQueries = queryField((t) => {
       return services.findAuditoria(id);
     },
   });
+  t.list.field('rolesAuditoria', {
+    type: 'KeycloakRole',
+    args: {
+      input: 'IdInput',
+    },
+    resolve: async (root, _args, { sanitizedArgs: { auditoria } }) => {
+      return services.getRolesAuditoria(auditoria);
+    },
+  });
 });

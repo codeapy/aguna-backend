@@ -1,5 +1,7 @@
+import { TipoRolAuditoria, Auditoria } from '@prisma/client';
 import { keycloak, prisma } from '../../schema/context';
 import { forEachAsync } from '../../utils/helpers';
+import { KeycloakRole } from '../../utils/types';
 
 async function crearRolesConPrefijo(prefijo: number) {
   const tiposRolAuditoria = await prisma.tipoRolAuditoria.findMany();
@@ -25,10 +27,22 @@ async function getAuditorias() {
 }
 
 async function createAuditoria(nombre: string, entidadId: number) {
+  const tiposRolConnects = (await prisma.tipoRolAuditoria.findMany()).map(
+    (tipoRol) => ({
+      id: tipoRol.id,
+    })
+  );
   const auditoria = await prisma.auditoria.create({
     data: {
       nombre,
-      entidadId,
+      entidad: {
+        connect: {
+          id: entidadId,
+        },
+      },
+      tiposRol: {
+        connect: tiposRolConnects,
+      },
     },
     include: {
       entidad: true,
@@ -76,35 +90,35 @@ async function findAuditoria(id: number) {
 
 type AsignacionRol = {
   keycloakUserId: string;
-  codigosRolesAuditoria: string[];
+  roles: KeycloakRole[];
 };
 
 async function asignarRoles(asignaciones: AsignacionRol[]) {
   try {
     await forEachAsync<AsignacionRol>(asignaciones, async (asignacion) => {
-      await forEachAsync<string>(
-        asignacion.codigosRolesAuditoria,
-        async (codigoRolAuditoria) => {
-          const rol = await keycloak.roles.findOneByName({
-            name: codigoRolAuditoria,
-          });
-          await keycloak.users.addRealmRoleMappings({
-            id: asignacion.keycloakUserId,
-            roles: [
-              {
-                id: rol.id,
-                name: rol.name,
-              },
-            ],
-          });
-        }
-      );
+      const { keycloakUserId: id, roles } = asignacion;
+      await keycloak.users.addRealmRoleMappings({
+        id,
+        roles,
+      });
     });
     return true;
   } catch (e) {
     console.error(e);
     return false;
   }
+}
+
+async function getRolesAuditoria(
+  auditoria: Auditoria & { tiposRol: TipoRolAuditoria[] }
+) {
+  return Promise.all(
+    auditoria.tiposRol.map(async (tipoRol) =>
+      keycloak.roles.findOneByName({
+        name: `${auditoria.id}-${tipoRol.codigo}`,
+      })
+    )
+  );
 }
 
 export default {
@@ -114,4 +128,5 @@ export default {
   deleteAuditoria,
   findAuditoria,
   asignarRoles,
+  getRolesAuditoria,
 };
