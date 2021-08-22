@@ -17,7 +17,11 @@ async function crearRolesConPrefijo(prefijo: number) {
 }
 
 async function getAuditorias() {
-  return prisma.auditoria.findMany();
+  return prisma.auditoria.findMany({
+    include: {
+      entidad: true,
+    },
+  });
 }
 
 async function createAuditoria(nombre: string, entidadId: number) {
@@ -25,6 +29,9 @@ async function createAuditoria(nombre: string, entidadId: number) {
     data: {
       nombre,
       entidadId,
+    },
+    include: {
+      entidad: true,
     },
   });
 
@@ -42,6 +49,9 @@ async function updateAuditoria(id: number, nombre: string, entidadId: number) {
     where: {
       id,
     },
+    include: {
+      entidad: true,
+    },
   });
 }
 
@@ -57,6 +67,9 @@ async function findAuditoria(id: number) {
   return prisma.auditoria.findUnique({
     where: {
       id,
+    },
+    include: {
+      entidad: true,
     },
   });
 }
